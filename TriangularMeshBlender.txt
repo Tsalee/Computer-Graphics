@@ -1,0 +1,31 @@
+import bpy
+import bmesh
+
+# Clear existing mesh
+bpy.ops.object.select_all(action='SELECT')
+bpy.ops.object.delete(use_global=False)
+
+mesh = bpy.data.meshes.new("Pyramid")
+obj = bpy.data.objects.new("Pyramid", mesh)
+bpy.context.collection.objects.link(obj)
+
+bm = bmesh.new()
+
+# Define vertices
+verts = [
+    bm.verts.new((-3.5, -2, 0)),   # A
+    bm.verts.new(( 3.5, -2, 0)),   # B
+    bm.verts.new(( 3.5,  2, 0)),   # C
+    bm.verts.new((-3.5,  2, 0)),   # D
+    bm.verts.new(( 0.0,  0.0, 3))  # E (apex)
+]
+
+bm.faces.new((verts[0], verts[1], verts[4]))  # A-B-E
+bm.faces.new((verts[1], verts[2], verts[4]))  # B-C-E
+bm.faces.new((verts[2], verts[3], verts[4]))  # C-D-E
+bm.faces.new((verts[3], verts[0], verts[4]))  # D-A-E
+bm.faces.new((verts[0], verts[1], verts[2]))  # A-B-C (base)
+bm.faces.new((verts[0], verts[2], verts[3]))  # A-C-D (base)
+
+bm.to_mesh(mesh)
+bm.free()
